@@ -14,7 +14,7 @@ Currently the script allows you to get back queue information on queuesize, and 
 
 #### What else could I make it do?
 
-WHatever else is available via the jolokia API.  It could be used to pull back camel routes, could be used to invoke other commands.  I hope the code is understandable enough to follow...! X-D
+Whatever else is available via the jolokia API.  It could be used to pull back camel routes, could be used to invoke other commands.  I hope the code is understandable enough to follow...! X-D
 
 ## Configuration
 
@@ -30,6 +30,15 @@ The application/script requires the following variables to be set...
 
 - queuesize
 - queuepurge <queue.name>
+- queuedispatched
+- queuecount
+- queueproducercount
+- topicdispatched
+- topiccount
+- topicconsumercount
+- topicproducercount
+-
+
 
 ## Output Like so...
 
@@ -44,25 +53,25 @@ Do tell me how I can serve the greater good...: queuesize
 ┌────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬───────────┐
 │ broker             │ mbean                                                                                                            │ QueueSize │
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello1,destinationType=Queue,type=Broker │ 7         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello1,destinationType=Queue,type=Broker │                                                       7
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello2,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello2,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello3,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello3,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello4,destinationType=Queue,type=Broker │ 4         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello4,destinationType=Queue,type=Broker │                                                       4
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello5,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello5,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello1,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello1,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello2,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello2,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello3,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello3,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello4,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello4,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello5,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello5,destinationType=Queue,type=Broker │                                                       0    
 └────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴───────────┘
 
 Do tell me how I can serve the greater good...: queuepurge queue.hello1
@@ -71,26 +80,26 @@ Do tell me how I can serve the greater good...: queuesize
 ┌────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬───────────┐
 │ broker             │ mbean                                                                                                            │ QueueSize │
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello1,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello1,destinationType=Queue,type=Broker │                                                       0         
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello2,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello2,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello3,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello3,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello4,destinationType=Queue,type=Broker │ 4         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello4,destinationType=Queue,type=Broker │                                                       4         
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-ac7bm │ org.apache.activemq:brokerName=broker-amq-4-ac7bm,destinationName=queue.hello5,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-ac7bm │ destinationName=queue.hello5,destinationType=Queue,type=Broker │                                                       0         
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello1,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello1,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello2,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello2,destinationType=Queue,type=Broker │                                                       0         
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello3,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello3,destinationType=Queue,type=Broker │                                                       0
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello4,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello4,destinationType=Queue,type=Broker │                                                       0         
 ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼───────────┤
-│ broker-amq-4-vspe5 │ org.apache.activemq:brokerName=broker-amq-4-vspe5,destinationName=queue.hello5,destinationType=Queue,type=Broker │ 0         │
+│ broker-amq-4-vspe5 │ destinationName=queue.hello5,destinationType=Queue,type=Broker │                                                       0
 └────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴───────────┘
 
-Do tell me how I can serve the greater good...: 
+[Type operation: queuesize, queuepurge destname, queuedispatched, queuecount, queueconsumercount, queueproducercount, topicdispatched, topiccount, topicconsumercount, topicproducercount ]:
 ```

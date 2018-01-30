@@ -40,7 +40,7 @@ def static setupCamel() {
 
     camelCtx.addRoutes(new RouteBuilder() {
         def void configure() {
-            from('stream:in?promptMessage=Do tell me how I can serve the greater good...: ')
+            from('stream:in?promptMessage=[Type operation: queuesize, queuepurge destname, queuedispatched, queuecount, queueconsumercount, queueproducercount, topicdispatched, topiccount, topicconsumercount, topicproducercount ]:  ')
                     .process {
                 def commands = it.in.getBody(String.class).tokenize(' ')
                 commands.eachWithIndex { String entry, int i ->
@@ -49,22 +49,81 @@ def static setupCamel() {
                 }
             }
             .recipientList(header('route'))
-
+			/**
+			 * Queue operations
+			 */
             from('direct:queuesize')
                 .setBody(constant([type:"read",
                                mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=*",
                                attribute: ["QueueSize"]]))
                 .to('direct:aggregate')
                 .to('direct:generateTable')
-
+			from('direct:queuedispatched')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=*",
+							   attribute: ["DispatchCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			
+			from('direct:queuecount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=*",
+							   attribute: ["EnqueueCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			
+			from('direct:queueconsumercount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=*",
+							   attribute: ["ConsumerCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			from('direct:queueproducercount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=*",
+							   attribute: ["ProducerCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			
             from('direct:queuepurge')
                 .process( { it.in.body = [type:"EXEC",
                                           mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Queue,destinationName=${it.in.headers.'param1'}",
                                           operation: "purge"]} )
                 .to('direct:aggregate')
                 .process({ println "OK!" })
-
-            from('direct:aggregate')
+			/**
+			 * Topic operations
+			 */
+				
+			from('direct:topicdispatched')
+			    .setBody(constant([type:"read",
+                               mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Topic,destinationName=*",
+                               attribute: ["DispatchCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			from('direct:topiccount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Topic,destinationName=*",
+							   attribute: ["EnqueueCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+			
+			from('direct:topicconsumercount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Topic,destinationName=*",
+							   attribute: ["ConsumerCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+            
+			from('direct:topicproducercount')
+				.setBody(constant([type:"read",
+							   mbean:"org.apache.activemq:type=Broker,brokerName=kube-lookup,destinationType=Topic,destinationName=*",
+							   attribute: ["ProducerCount"]]))
+				.to('direct:aggregate')
+				.to('direct:generateTable')
+				
+				
+			from('direct:aggregate')
                 .setProperty('originalBody', simple('${body}'))
                 .process(new Processor() {
                 @Override
@@ -180,7 +239,10 @@ def class JolokiaResponseToSystemOutTable implements Processor {
             def brokerName = it1.broker
             it1.value.each { it2 ->
                 def valueMap = ['broker':brokerName]
-                valueMap.put('mbean', it2.key)
+				
+               // valueMap.put('mbean', it2.key)
+				def mbeanHumanName = (it2.key =~ "destinationName=(.*)")[0][1]
+				valueMap.put('mbean', mbeanHumanName)
                 it2.value.each{ it3 ->
                     valueMap.put(it3.key, it3.value)
                 }
@@ -192,11 +254,11 @@ def class JolokiaResponseToSystemOutTable implements Processor {
 }
 
 
-System.setProperty("kubernetes.master", "https://10.1.2.2:8443")
-System.setProperty("kubernetes.namespace", "amq")
+System.setProperty("kubernetes.master", "https://axdesocp1console.central.inditex.grp:8443")
+System.setProperty("kubernetes.namespace", "amq-ssl")
 System.setProperty("kubernetes.labelname", "application")
-System.setProperty("kubernetes.labelvalue", "broker")
-System.setProperty("kubernetes.auth.token", "oTipQVOtgGcpJLGPh3-rLgHcSGPm77S79CTKuZ5yZpA")
+System.setProperty("kubernetes.labelvalue", "amq-test-mqtt")
+System.setProperty("kubernetes.auth.token", "safRzKLqFRbaRmvmgf7dOTASBCLFBpXitbHVEw7Gc3E")
 System.setProperty("kubernetes.trust.certificates", "true")
 
 setupCamel()
